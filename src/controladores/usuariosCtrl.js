@@ -61,31 +61,29 @@ export const login = async (req, res) => {
         const [rows] = await conmysql.query(
             'SELECT * FROM usuarios WHERE usr_usuario = ?', [usr_usuario]);
         if (rows.length === 0) {
-            return res.status(401).json({ message: "Credenciales inválidas" });
+            return res.status(401).json({
+            usr_id: 0,
+            message: "Credenciales inválidas"
+        });
         }
         const usuario = rows[0];
+
+        // Verificar contraseña tanto hasheada como no hasheada
         let contrasenaValida = false;
 
-        // Verificar contraseña tanto que este hasheada como no hasheada
-        if (usuario.usr_clave.startsWith('$2a$')) {
+        // Si la clave almacenada parece un hash bcrypt ($2a$ o $2b$)
+        if (usuario.usr_clave.startsWith('$2a$') || usuario.usr_clave.startsWith('$2b$')) {
             contrasenaValida = await bcrypt.compare(usr_clave, usuario.usr_clave);
         } else {
+            // Comparar texto plano directamente
             contrasenaValida = usr_clave === usuario.usr_clave;
-            
-            // Si la contraseña no estaba hasheada, hashearla ahora
-            if (contrasenaValida) {
-                const salt = await bcrypt.genSalt(10);
-                const hash = await bcrypt.hash(usr_clave, salt);
-                await conmysql.query(
-                    'UPDATE usuarios SET usr_clave = ? WHERE usr_id = ?',
-                    [hash, usuario.usr_id]
-                );
-            }
         }
 
+        // Si la contraseña no es válida
         if (!contrasenaValida) {
-            return res.status(401).json({ 
-                message: "Credenciales inválidas" 
+            return res.json({
+                usr_id: 0,
+                message: "Credenciales inválidas"
             });
         }
 
@@ -93,7 +91,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {id: usuario.usr_id,},
             process.env.JWT_SECRET || 'tu_secreto_super_seguro',
-            { expiresIn: '1h' }
+            { expiresIn: '24h' }
         );
 
          // Enviar el token y el id del usuario en la respuesta
