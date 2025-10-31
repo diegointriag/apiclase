@@ -13,6 +13,7 @@ import pedidosRoutes from './routes/pedidos.routes.js'
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
 
+
 //definir los permisos
 const corsOptions={
     origin:'*', //la direccion del dominio del servidor
@@ -25,12 +26,12 @@ const app=express();
 app.use(cors(corsOptions));
 app.use(express.json()) //interpretar objetos json
 app.use(express.urlencoded({extended:true})) //se añade para poder receptar por unidad
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //indicar que rutas se utilice ojo
-app.use('/api', clientesRoutes)
-app.use('/api', productosRoutes)
+app.use('/api/clientes', clientesRoutes)
+app.use('/api/productos', productosRoutes)
 app.use('/api', usuariosRoutes)
 app.use('/api', pedidosRoutes)
 

@@ -10,7 +10,7 @@ import {
     deleteProducto
 } from '../controladores/productosCtrl.js';
 
-import { verifyToken } from "../jwt/verifytoken.js"; // 🔐 importa el middleware
+import { verifyToken } from "../jwt/verifytoken.js"; //  importa el middleware
 
 // Configurar multer para almacenar las imágenes
 const storage = multer.diskStorage({
@@ -26,13 +26,13 @@ const uploads = multer({ storage });
 const router = Router();
 
 // 🧩 Rutas protegidas con verifyToken
-router.get('/productos', verifyToken, getProductos);       // select
-router.get('/productos/:id', verifyToken, getproductosxid); // select por id
+router.get('/', verifyToken, getProductos);       // select
+router.get('/:id', verifyToken, getproductosxid); // select por id
 
-// 🔓 Rutas abiertas (puedes protegerlas también si quieres)
-router.post('/productos', verifyToken, upload.single('prod_imagen'), postProducto);  // insert
-router.put('/productos/:id',verifyToken, upload.single('prod_imagen'), putProducto);   // update
-router.patch('/productos/:id',verifyToken, patchProducto);  // update parcial
-router.delete('/productos/:id', verifyToken, deleteProducto); // delete
+//  Rutas abiertas (puedes protegerlas también si quieres)
+router.post('/', verifyToken, upload.single('prod_imagen'), postProducto);  // insert
+router.put('/:id',verifyToken, upload.single('prod_imagen'), putProducto);   // update
+router.patch('/:id',verifyToken,upload.single('prod_imagen'), patchProducto);  // update parcial
+router.delete('/:id', verifyToken, deleteProducto); // delete
 
 export default router;

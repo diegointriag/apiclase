@@ -62,8 +62,8 @@ export const login = async (req, res) => {
             'SELECT * FROM usuarios WHERE usr_usuario = ?', [usr_usuario]);
         if (rows.length === 0) {
             return res.status(401).json({
-            usr_id: 0,
-            message: "Credenciales inválidas"
+            message: "Credenciales inválidas",
+            usr_id: 0
         });
         }
         const usuario = rows[0];
@@ -82,8 +82,8 @@ export const login = async (req, res) => {
         // Si la contraseña no es válida
         if (!contrasenaValida) {
             return res.json({
-                usr_id: 0,
-                message: "Credenciales inválidas"
+                message: "Credenciales inválidas",
+                usr_id: 0
             });
         }
 

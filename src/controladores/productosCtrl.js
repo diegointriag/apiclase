@@ -133,18 +133,24 @@ async (req,res)=>{
     }
 }
 
-export const deleteProducto=
-async(req, res)=>{
-    try {
-        const [rows]=await conmysql.query('delete from productos where prod_id=?',[req.params.id])
-        if (rows.affectedRows<=0)return res.status(404).json({
-            id:0,
-            message:"No pudo eliminar el producto"
-        })
-        res.sendStatus(202)
-    } catch (error) {
-        return res.status(500).json({
-            message:"Error del lado del servidor"
-        })
+export const deleteProducto = async (req, res) => {
+  try {
+    const [rows] = await conmysql.query('DELETE FROM productos WHERE prod_id=?', [req.params.id]);
+    if (rows.affectedRows <= 0) {
+      return res.status(404).json({
+        id: 0,
+        message: "No pudo eliminar el producto"
+      });
     }
-}
+
+    // Devuelve JSON indicando éxito
+    return res.status(200).json({
+      id: req.params.id,
+      message: "Producto eliminado correctamente"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error del lado del servidor"
+    });
+  }
+};
