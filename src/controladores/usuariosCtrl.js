@@ -61,11 +61,13 @@ export const login = async (req, res) => {
         const [rows] = await conmysql.query(
             'SELECT * FROM usuarios WHERE usr_usuario = ?', [usr_usuario]);
         if (rows.length === 0) {
-            return res.status(401).json({
+        return res.status(401).json({
+            auth: false,
             message: "Credenciales inválidas",
             usr_id: 0
         });
         }
+
         const usuario = rows[0];
 
         // Verificar contraseña tanto hasheada como no hasheada
@@ -81,17 +83,19 @@ export const login = async (req, res) => {
 
         // Si la contraseña no es válida
         if (!contrasenaValida) {
-            return res.json({
-                message: "Credenciales inválidas",
-                usr_id: 0
+        return res.json({
+            auth: false,
+         message: "Credenciales inválidas",
+            usr_id: 0
             });
         }
+
 
         // Generar token
         const token = jwt.sign(
             {id: usuario.usr_id,},
             process.env.JWT_SECRET || 'tu_secreto_super_seguro',
-            { expiresIn: '24h' }
+            { expiresIn: '72h' }
         );
 
          // Enviar el token y el id del usuario en la respuesta
