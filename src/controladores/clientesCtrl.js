@@ -1,4 +1,5 @@
 import { conmysql } from "../db.js";
+import { pool } from "../db.js";
 
 export const obetenerClientes = async (req, res) => {
     res.send("Clientes obtenidos correctamente");

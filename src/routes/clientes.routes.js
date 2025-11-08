@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   obetenerClientes,
   getobetenerClientes,
+  getClientesxCedula,
   getClientesxId,
   postClientes,
   putClientes,
