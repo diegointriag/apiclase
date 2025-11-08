@@ -15,6 +15,7 @@ const router = Router();
 
 //  Rutas protegidas con verifyToken
 router.get("/", verifyToken, getobetenerClientes); // obtener todos
+router.get("/cedula/:cedula", verifyToken, getClientesxCedula);
 router.get("/:id", verifyToken, getClientesxId);  // obtener por id
 
 //  Rutas abiertas (puedes protegerlas también si quieres)

@@ -101,3 +101,19 @@ export const deleteClientes = async (req, res) => {
         });
     }
 };
+
+export const getClientesxCedula = async (req, res) => {
+  const { cedula } = req.params;
+  try {
+    const [rows] = await pool.query(
+      "SELECT * FROM clientes WHERE cli_identificacion = ?",
+      [cedula]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: "Error en el servidor", error });
+  }
+};
