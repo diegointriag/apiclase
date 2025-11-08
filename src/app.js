@@ -8,6 +8,7 @@ import clientesRoutes from './routes/clientes.routes.js'
 import productosRoutes from './routes/productos.routes.js'
 import usuariosRoutes from './routes/usuarios.routes.js'
 import pedidosRoutes from './routes/pedidos.routes.js'
+import comprasRoutes from "./routes/compras.routes.js"
 
 // configuración de __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use('/api/clientes', clientesRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', pedidosRoutes);
+app.use("/api/compras", comprasRoutes);
 
 // manejo de error 404
 app.use((req, res, next) => {
