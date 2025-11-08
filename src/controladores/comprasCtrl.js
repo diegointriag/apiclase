@@ -1,4 +1,5 @@
-import { pool } from "../db.js";
+import { conmysql as pool } from "../db.js";
+
 
 export const postCompra = async (req, res) => {
   try {
