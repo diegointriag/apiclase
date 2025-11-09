@@ -23,30 +23,40 @@ export const getproductosxid= async(req, res)=>{
     }
 }
 
-export const postProducto=
-async (req,res)=>{
-    try {
-        //console.log(req.body)
-        const {prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo}=req.body
-        const prod_imagen = req.file ? `/uploads/${req.file.filename}`:null; //capturar la imagen que se envie en un formulario
-        console.log("Datos del producto:",req.body); //verifica req.body
-        console.log("Archivo de imagen:",req.file);
-        const [fila] = await conmysql.query('insert into productos (prod_codigo) values (?)',
-            [prod_codigo]);
-        if (fila.length > 0) return res.status(409).json({id: 0,
-            message: 'Producto con código: ' +prod_codigo +'ya existe.',
-            });
-        const [row]=await conmysql.query('insert into productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) values(?,?,?,?,?,?)',
-            [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen])
+export const postProducto = async (req, res) => {
+  try {
+    const { prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo } = req.body;
+    const prod_imagen = req.file ? `/uploads/${req.file.filename}` : null;
 
-        res.send({
-            id:row.insertId,
-            message:'Producto registrado '
-        })
-    } catch (error) {
-        return res.status(500).json({message:'error del lado del servidor'})
+    console.log("Datos del producto:", req.body);
+    console.log("Archivo de imagen:", req.file);
+
+    //  Verificar si el código ya existe antes de insertar
+    const [existe] = await conmysql.query('SELECT * FROM productos WHERE prod_codigo = ?', [prod_codigo]);
+
+    if (existe.length > 0) {
+      return res.status(409).json({
+        id: 0,
+        message: 'Producto con código ' + prod_codigo + ' ya existe.',
+      });
     }
-}
+
+    //  Insertar producto correctamente
+    const [row] = await conmysql.query(
+      'INSERT INTO productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) VALUES (?, ?, ?, ?, ?, ?)',
+      [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen]
+    );
+
+    res.json({
+      id: row.insertId,
+      message: 'Producto registrado correctamente.',
+    });
+  } catch (error) {
+    console.error('Error en postProducto:', error);
+    return res.status(500).json({ message: 'Error del lado del servidor' });
+  }
+};
+
 
 
 export const putProducto = async (req, res) => {
