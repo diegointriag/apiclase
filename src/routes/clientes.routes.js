@@ -23,3 +23,4 @@ router.put("/:id", verifyToken, putClientes);
 router.delete("/:id", verifyToken, deleteClientes);
 
 export default router;
+
