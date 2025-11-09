@@ -1,30 +1,22 @@
 import { conmysql as pool } from "../db.js";
 
 
-export const postCompra = async (req, res) => {
+export const postCompras = async (req, res) => {
   try {
-    const { cli_id, total, fecha, detalles } = req.body;
+    const { com_fecha, com_total, cli_id } = req.body;
 
-    const [result] = await pool.query(
-      "INSERT INTO compras (cli_id, total, fecha) VALUES (?, ?, ?)",
-      [cli_id, total, fecha]
-    );
-
-    const compraId = result.insertId;
-
-    // Si hay detalles (productos de la compra)
-    if (detalles && Array.isArray(detalles)) {
-      for (const det of detalles) {
-        await pool.query(
-          "INSERT INTO detalle_compras (compra_id, producto_id, cantidad, precio) VALUES (?, ?, ?, ?)",
-          [compraId, det.producto_id, det.cantidad, det.precio]
-        );
-      }
+    if (!com_fecha || !com_total || !cli_id) {
+      return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    res.json({ message: "Compra registrada", id: compraId });
+    const [result] = await pool.query(
+      "INSERT INTO compras (com_fecha, com_total, cli_id) VALUES (?, ?, ?)",
+      [com_fecha, com_total, cli_id]
+    );
+
+    res.status(201).json({ id: result.insertId, message: "Compra registrada correctamente" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al registrar la compra" });
+    console.error("❌ Error en postCompras:", error);
+    res.status(500).json({ message: "Error del servidor", error: error.message });
   }
 };
