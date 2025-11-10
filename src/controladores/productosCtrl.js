@@ -28,34 +28,42 @@ export const postProducto = async (req, res) => {
     const { prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo } = req.body;
     const prod_imagen = req.file ? `/uploads/${req.file.filename}` : null;
 
-    console.log("Datos del producto:", req.body);
-    console.log("Archivo de imagen:", req.file);
+    console.log("📦 Datos recibidos:", req.body);
+    console.log("🖼️ Archivo recibido:", req.file);
 
-    //  Verificar si el código ya existe antes de insertar
-    const [existe] = await conmysql.query('SELECT * FROM productos WHERE prod_codigo = ?', [prod_codigo]);
+    // Verificar si el código ya existe
+    const [existe] = await conmysql.query(
+      'SELECT * FROM productos WHERE prod_codigo = ?',
+      [prod_codigo]
+    );
 
     if (existe.length > 0) {
       return res.status(409).json({
         id: 0,
-        message: 'Producto con código ' + prod_codigo + ' ya existe.',
+        message: `El producto con código ${prod_codigo} ya existe.`,
       });
     }
 
-    //  Insertar producto correctamente
-    const [row] = await conmysql.query(
-      'INSERT INTO productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) VALUES (?, ?, ?, ?, ?, ?)',
+    // Insertar producto
+    const [result] = await conmysql.query(
+      `INSERT INTO productos 
+       (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen)
+       VALUES (?, ?, ?, ?, ?, ?)`,
       [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen]
     );
 
+    console.log("✅ Producto insertado con ID:", result.insertId);
+
     res.json({
-      id: row.insertId,
-      message: 'Producto registrado correctamente.',
+      id: result.insertId,
+      message: "Producto registrado correctamente.",
     });
   } catch (error) {
-    console.error('Error en postProducto:', error);
-    return res.status(500).json({ message: 'Error del lado del servidor' });
+    console.error("❌ Error en postProducto:", error);
+    res.status(500).json({ message: "Error del lado del servidor" });
   }
 };
+
 
 
 
